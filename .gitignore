@@ -1,0 +1,38 @@
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+pnpm-debug.log
+.env
+.env.local
+.env.development
+.env.production
+.env.test
+.env.*.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+.log
+log.txt
+
+# Editor & OS-specific files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Build output
+faq-backend/dist/
+faq-backend/build/
+faq-frontend/dist/
+faq-frontend/build/
+
+# Docker-related files
+docker-compose.override.yml
+docker-compose.dev.yml
+docker-compose.prod.yml
