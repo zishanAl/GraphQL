@@ -63,10 +63,11 @@ async function startServer() {
   `
         ,
         resolvers: {
-            Todo: {
-                user: async (todo) =>
-                    (await axios.get(`https://jsonplaceholder.typicode.com/users/${todo.userId}`)).data,
-            },
+            // Todo: {
+            // uncomment this to fetch user data for each todo
+            //     user: async (todo) =>
+            //         (await axios.get(`https://jsonplaceholder.typicode.com/users/${todo.userId}`)).data,
+            // },
             Comments: {
                 post: async (comments) =>
                     (await axios.get(`https://jsonplaceholder.typicode.com/posts/${comments.postId}`)).data,
@@ -80,8 +81,29 @@ async function startServer() {
                     (await axios.get(`https://jsonplaceholder.typicode.com/users/${post.userId}`)).data,
             },
             Query: {
-                getTodos: async () =>
-                    (await axios.get("https://jsonplaceholder.typicode.com/todos")).data,
+                // getTodos: async () =>
+                //     response time = 4.46s 
+                //     (await axios.get("https://jsonplaceholder.typicode.com/todos")).data,
+                getTodos: async () => {
+                    // response time = 1.80s
+                    // Step 1: Fetch all Todos in one request
+                    const todos = (await axios.get("https://jsonplaceholder.typicode.com/todos")).data;
+
+                    // Step 2: Fetch all Users in one request
+                    const users = (await axios.get("https://jsonplaceholder.typicode.com/users")).data;
+
+                    // Step 3: Create a quick lookup map for users
+                    const userMap = users.reduce((acc, user) => {
+                        acc[user.id] = user;
+                        return acc;
+                    }, {});
+
+                    // Step 4: Attach user data to each Todo
+                    return todos.map(todo => ({
+                        ...todo,
+                        user: userMap[todo.userId] || null  // Get user from map
+                    }));
+                },
                 getAllUsers: async () =>
                     (await axios.get("https://jsonplaceholder.typicode.com/users")).data,
                 getUser: async (parent, { id }) =>
